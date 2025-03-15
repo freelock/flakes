@@ -28,7 +28,8 @@
               cd "$TMP_DIR"
 
               # Initialize slidev in the temporary directory
-              npm create slidev@latest -- . --template=default --yes
+              # Using CI=true to prevent automatic startup
+              CI=true npm create slidev@latest -- . --template=default --yes
 
               # Return to original directory
               cd "$OLDPWD"
@@ -49,17 +50,17 @@
 
               # Copy other necessary directories without overwriting
               mkdir -p components styles
-              [ -d "$TMP_DIR/components" ] && cp -n "$TMP_DIR/components/"* components/ 2>/dev/null || true
-              [ -d "$TMP_DIR/styles" ] && cp -n "$TMP_DIR/styles/"* styles/ 2>/dev/null || true
+              [ -d "$TMP_DIR/components" ] && cp -rn "$TMP_DIR/components/"* components/ 2>/dev/null || true
+              [ -d "$TMP_DIR/styles" ] && cp -rn "$TMP_DIR/styles/"* styles/ 2>/dev/null || true
 
-              # Install dependencies
+              # Install dependencies without auto-running scripts
               echo "Installing dependencies..."
-              npm install
+              npm install --no-scripts
 
               # Clean up
               rm -rf "$TMP_DIR"
 
-              echo "Slidev initialized successfully!"
+              echo "Slidev initialized successfully! Run 'slidev' to start the presentation server."
             else
               echo "Project already initialized. Run 'npm install' if needed."
             fi
