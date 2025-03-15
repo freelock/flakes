@@ -18,7 +18,7 @@
 
       # Slidev-specific template
       slidev = {
-        path = ./template;  # Points to the slidev template directory
+        path = ./templates/slidev;  # Points to the slidev template directory
         description = "Bootstrap a new Slidev presentation with Playwright support";
         welcomeText = ''
           # Slidev Project Template
