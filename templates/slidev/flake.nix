@@ -17,12 +17,18 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
 
-          # Create script to initialize a new Slidev project
+          # Create script to initialize a new Slidev project in the current directory
           initSlidevScript = pkgs.writeShellScriptBin "init-slidev" ''
             #!/bin/sh
             if [ ! -f "package.json" ]; then
-              echo "Initializing new Slidev project..."
-              npm create slidev@latest
+              echo "Initializing new Slidev project in the current directory..."
+              # Use --template to specify blank template and --yes to skip prompts
+              # Using -- to pass arguments directly to the create command
+              npm create slidev@latest -- . --template=default --yes
+
+              # If you want to bypass the template question and use default
+              # echo "Select the 'default' template when prompted"
+              # npm create slidev@latest .
             else
               echo "Project already initialized. Run 'npm install' if needed."
             fi
@@ -49,7 +55,7 @@
               export PATH="$PWD/node_modules/.bin:$PATH"
 
               if [ ! -f "package.json" ]; then
-                echo "No package.json found. Run 'init-slidev' to create a new Slidev project."
+                echo "No package.json found. Run 'init-slidev' to create a new Slidev project in this directory."
               else
                 echo "Local node_modules/.bin added to PATH. You can run 'slidev' directly."
               fi
