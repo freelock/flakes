@@ -1,3 +1,9 @@
+## 0.1.4 (2025-03-15)
+
+### Fix
+
+- **slidev**: avoid starting slidev in tmp directory to make startup less confusing
+
 ## 0.1.3 (2025-03-15)
 
 ### Fix
