@@ -1,3 +1,9 @@
+## 0.1.3 (2025-03-15)
+
+### Fix
+
+- **slidev**: don't clobber flake and existing slides.md when installing slidev
+
 ## 0.1.2 (2025-03-15)
 
 ### Fix
