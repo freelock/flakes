@@ -17,18 +17,49 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
 
-          # Create script to initialize a new Slidev project in the current directory
+          # Create script to initialize a new Slidev project while preserving existing files
           initSlidevScript = pkgs.writeShellScriptBin "init-slidev" ''
             #!/bin/sh
             if [ ! -f "package.json" ]; then
-              echo "Initializing new Slidev project in the current directory..."
-              # Use --template to specify blank template and --yes to skip prompts
-              # Using -- to pass arguments directly to the create command
+              echo "Initializing Slidev project while preserving existing files..."
+
+              # Create a temporary directory
+              TMP_DIR=$(mktemp -d)
+              cd "$TMP_DIR"
+
+              # Initialize slidev in the temporary directory
               npm create slidev@latest -- . --template=default --yes
 
-              # If you want to bypass the template question and use default
-              # echo "Select the 'default' template when prompted"
-              # npm create slidev@latest .
+              # Return to original directory
+              cd "$OLDPWD"
+
+              # Copy necessary files without overwriting existing ones
+              echo "Copying Slidev files to the current directory..."
+
+              # Copy package.json and package-lock.json
+              cp "$TMP_DIR/package.json" .
+              [ -f "$TMP_DIR/package-lock.json" ] && cp "$TMP_DIR/package-lock.json" .
+
+              # Copy slides.md only if it doesn't exist
+              if [ ! -f "slides.md" ]; then
+                cp "$TMP_DIR/slides.md" .
+              else
+                echo "Keeping existing slides.md"
+              fi
+
+              # Copy other necessary directories without overwriting
+              mkdir -p components styles
+              [ -d "$TMP_DIR/components" ] && cp -n "$TMP_DIR/components/"* components/ 2>/dev/null || true
+              [ -d "$TMP_DIR/styles" ] && cp -n "$TMP_DIR/styles/"* styles/ 2>/dev/null || true
+
+              # Install dependencies
+              echo "Installing dependencies..."
+              npm install
+
+              # Clean up
+              rm -rf "$TMP_DIR"
+
+              echo "Slidev initialized successfully!"
             else
               echo "Project already initialized. Run 'npm install' if needed."
             fi
